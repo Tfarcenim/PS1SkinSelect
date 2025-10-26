@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "package": "tfar.ps1skinselect.mixin",
+  "compatibilityLevel": "JAVA_16",
+  "refmap": "ps1skinselect.refmap.json",
+  "mixins": [
+    "PlayerMixin"
+  ],
+  "client": [
+    "AbstractClientPlayerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "minVersion": "0.8.4"
+}
