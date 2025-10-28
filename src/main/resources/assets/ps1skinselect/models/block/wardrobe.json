@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "ps1skinselect:block/wardrobe_front",
+    "north": "ps1skinselect:block/wardrobe_front",
+    "south": "ps1skinselect:block/wardrobe_side",
+    "east": "ps1skinselect:block/wardrobe_side",
+    "west": "ps1skinselect:block/wardrobe_front",
+    "up": "ps1skinselect:block/wardrobe_top",
+    "down": "minecraft:block/oak_planks"
+  }
+}

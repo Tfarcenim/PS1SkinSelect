@@ -4,23 +4,23 @@ import net.minecraft.world.item.DyeColor;
 import org.jetbrains.annotations.Nullable;
 
 public enum ClothingColor {
-    NONE(null),
-    WHITE(DyeColor.WHITE),
-    ORANGE(DyeColor.ORANGE),
-    MAGENTA(DyeColor.MAGENTA),
-    LIGHT_BLUE(DyeColor.LIGHT_BLUE),
-    YELLOW(DyeColor.YELLOW),
-    LIME(DyeColor.LIME),
-    PINK(DyeColor.PINK),
-    GRAY(DyeColor.GRAY),
-    LIGHT_GRAY(DyeColor.LIGHT_GRAY),
-    CYAN(DyeColor.CYAN),
-    PURPLE(DyeColor.PURPLE),
-    BLUE(DyeColor.BLUE),
-    BROWN(DyeColor.BROWN),
-    GREEN(DyeColor.GREEN),
-    RED(DyeColor.RED),
-    BLACK(DyeColor.BLACK);
+    normal(null),
+    white(DyeColor.WHITE),
+    orange(DyeColor.ORANGE),
+    magenta(DyeColor.MAGENTA),
+    light_blue(DyeColor.LIGHT_BLUE),
+    yellow(DyeColor.YELLOW),
+    lime(DyeColor.LIME),
+    pink(DyeColor.PINK),
+    gray(DyeColor.GRAY),
+    light_gray(DyeColor.LIGHT_GRAY),
+    cyan(DyeColor.CYAN),
+    purple(DyeColor.PURPLE),
+    blue(DyeColor.BLUE),
+    brown(DyeColor.BROWN),
+    green(DyeColor.GREEN),
+    red(DyeColor.RED),
+    black(DyeColor.BLACK);
 
     public final DyeColor color;
 

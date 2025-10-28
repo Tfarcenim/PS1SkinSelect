@@ -7,9 +7,13 @@ import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import tfar.ps1skinselect.BaseSkin;
+import tfar.ps1skinselect.ClothingColor;
+import tfar.ps1skinselect.ClothingType;
 import tfar.ps1skinselect.PlayerDuck;
 import tfar.ps1skinselect.network.ForgePacketHandler;
 import tfar.ps1skinselect.network.server.C2SSkinSettingsPacket;
+
+import java.util.Map;
 
 public class PS1SkinSelectScreen extends Screen {
 
@@ -49,14 +53,39 @@ public class PS1SkinSelectScreen extends Screen {
         this.leftPos = (this.width - this.imageWidth) / 2;
         this.topPos = (this.height - this.imageHeight) / 2;
 
-        changeSkin = addRenderableWidget(new Button(width/2 - 80,10,150,20, new TextComponent(skin.name()), this::press));
+        changeSkin = addRenderableWidget(new Button(width/2 - 70,10,140,20, new TextComponent(skin.name()), this::press));
         int w = 160;
-        save = addRenderableWidget(new Button(width/2-w,height - 30,150,20, new TextComponent("Save"), this::pressSave));
-        close = addRenderableWidget(new Button(width/2,height-30,150,20, new TextComponent("Close"), this::pressClose));
+       // save = addRenderableWidget(new Button(width/2-w,height - 30,150,20, new TextComponent("Save"), this::pressSave));
+        close = addRenderableWidget(new Button(width/2-75,height-30,150,20, new TextComponent("Save & Close"), this::pressClose));
+
+        for (int i = 0; i < ClothingType.values().length;i++) {
+            ClothingType clothingType = ClothingType.values()[i];
+            int h = 24 * i;
+            int w1 = 64;
+            Button buttonLeft = new Button(width/2-w1-8,40+h,16,20, new TextComponent("<"), pButton -> changeClothing(clothingType,false));
+            Button buttonRight = new Button(width/2+w1-8,40+h,16,20, new TextComponent(">"), pButton -> changeClothing(clothingType,true));
+            addRenderableWidget(buttonLeft);
+            addRenderableWidget(buttonRight);
+        }
+    }
+
+    Map<ClothingType,ClothingColor> getClothing() {
+        return ((PlayerDuck)minecraft.player).getClothing();
+    }
+
+    void changeClothing(ClothingType type,boolean right) {
+        ClothingColor current = getClothing().get(type);
+        int ordinal = current.ordinal();
+        ordinal = right ? ordinal+1 : ordinal-1;
+        if (ordinal<0) ordinal = ClothingColor.values().length-1;
+        if (ordinal>= ClothingColor.values().length) ordinal = 0;
+        ClothingColor newClothing = ClothingColor.values()[ordinal];
+        getClothing().put(type,newClothing);
+
     }
 
     void press(Button b) {
-        skin = skin == BaseSkin.STEVE ? BaseSkin.ALEX : BaseSkin.STEVE;
+        skin = skin == BaseSkin.steve ? BaseSkin.alex : BaseSkin.steve;
 
         //change how the local player renders
         ((PlayerDuck)minecraft.player).setBaseSkin(skin);
@@ -65,10 +94,10 @@ public class PS1SkinSelectScreen extends Screen {
     }
 
     void pressSave(Button b) {
-        ForgePacketHandler.sendToServer(new C2SSkinSettingsPacket(skin));
     }
 
     void pressClose(Button b) {
+        ForgePacketHandler.sendToServer(new C2SSkinSettingsPacket(skin,getClothing()));
         minecraft.setScreen(null);
     }
 

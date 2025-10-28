@@ -1,6 +1,7 @@
 package tfar.ps1skinselect.network;
 
 import tfar.ps1skinselect.network.client.S2CEventPacket;
+import tfar.ps1skinselect.network.client.S2CSkinSettingsPacket;
 import tfar.ps1skinselect.network.server.C2SActionPacket;
 import tfar.ps1skinselect.network.server.C2SSkinSettingsPacket;
 
@@ -10,6 +11,7 @@ public class PacketHandler {
         ForgePacketHandler.registerClientPacket(S2CEventPacket.class,S2CEventPacket::read);
         ForgePacketHandler.registerServerPacket(C2SActionPacket.class,C2SActionPacket::read);
         ForgePacketHandler.registerServerPacket(C2SSkinSettingsPacket.class, C2SSkinSettingsPacket::new);
+        ForgePacketHandler.registerClientPacket(S2CSkinSettingsPacket.class, S2CSkinSettingsPacket::new);
     }
 
 }

@@ -5,16 +5,22 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.slf4j.Logger;
+import tfar.ps1skinselect.client.PS1SkinSelectClient;
 import tfar.ps1skinselect.network.ForgePacketHandler;
 import tfar.ps1skinselect.network.PacketHandler;
 import tfar.ps1skinselect.network.client.S2CEventPacket;
@@ -31,10 +37,26 @@ public class PS1SkinSelect {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         // Register the setup method for modloading
         bus.addListener(this::setup);
+        bus.addGenericListener(Block.class,this::registerBlocks);
+        bus.addGenericListener(Item.class,this::registerItems);
+        bus.addListener(ModDatagen::gather);
+
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.addListener(this::commands);
         MinecraftForge.EVENT_BUS.addListener(this::serverStarted);
         MinecraftForge.EVENT_BUS.addListener(this::loggedIn);
+        MinecraftForge.EVENT_BUS.addListener(this::clonePlayer);
+        MinecraftForge.EVENT_BUS.addListener(this::tracking);
+        if (FMLEnvironment.dist.isClient()) {
+            PS1SkinSelectClient.init();
+        }
+    }
+
+    void registerBlocks(RegistryEvent.Register<Block> event) {
+        event.getRegistry().register(ModInit.BLOCK.setRegistryName("wardrobe"));
+    }
+    void registerItems(RegistryEvent.Register<Item> event) {
+        event.getRegistry().register(ModInit.ITEM.setRegistryName("wardrobe"));
     }
 
     public static ResourceLocation id(String path) {
@@ -42,7 +64,7 @@ public class PS1SkinSelect {
     }
 
     void commands(RegisterCommandsEvent event) {
-        SkinSelectCommand.register(event.getDispatcher());
+        //SkinSelectCommand.register(event.getDispatcher());
     }
 
     public static CustomSavedData customSavedData;
@@ -54,16 +76,25 @@ public class PS1SkinSelect {
                 () -> new CustomSavedData(), MOD_ID);
     }
 
+    void tracking(PlayerEvent.StartTracking event) {
+        Entity target = event.getTarget();
+        Player trackingPlayer = event.getPlayer();
+        if (target instanceof Player player) {
+            ForgePacketHandler.sendToClient(new S2CSkinSettingsPacket(player.getId(),
+                    ((PlayerDuck)player).getBaseSkin(),((PlayerDuck)player).getClothing()),(ServerPlayer) trackingPlayer);
+        }
+    }
+
     void loggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         ServerPlayer player = (ServerPlayer) event.getPlayer();
-        if (true||!customSavedData.seen.contains(player.getUUID())) {
-            ForgePacketHandler.sendToClient(S2CEventPacket.OPEN_SKIN_SELECT,player);
-            customSavedData.seen.add(player.getUUID());
-            customSavedData.setDirty();
-        }
-        player.getServer().getPlayerList().getPlayers().forEach(player1 ->
-                ForgePacketHandler.sendToClient(new S2CSkinSettingsPacket(((PlayerDuck)player).getBaseSkin()),
-                player1));
+        ForgePacketHandler.sendToAll(new S2CSkinSettingsPacket(player.getId(),((PlayerDuck)player).getBaseSkin(),((PlayerDuck)player).getClothing()));
+    }
+
+    private void clonePlayer(PlayerEvent.Clone event) {
+        Player oldPlayer = event.getOriginal();
+        Player newPlayer = event.getPlayer();
+        ((PlayerDuck)newPlayer).setClothing(((PlayerDuck)oldPlayer).getClothing());
+        ((PlayerDuck)newPlayer).setBaseSkin(((PlayerDuck)oldPlayer).getBaseSkin());
     }
 
     private void setup(final FMLCommonSetupEvent event) {

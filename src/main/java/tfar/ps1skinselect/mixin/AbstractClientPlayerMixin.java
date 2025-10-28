@@ -30,8 +30,8 @@ public abstract class AbstractClientPlayerMixin extends PlayerMixin {
     )
     private void setSkinToSteve(CallbackInfoReturnable<ResourceLocation> cir) {
         cir.setReturnValue(DefaultPlayerSkin.getDefaultSkin(switch (baseSkin) {
-            case STEVE -> STEVE_UUID;
-            case ALEX -> ALEX_UUID;
+            case steve -> STEVE_UUID;
+            case alex -> ALEX_UUID;
         }));
     }
 
@@ -42,8 +42,8 @@ public abstract class AbstractClientPlayerMixin extends PlayerMixin {
     )
     private void setModelToSteve(CallbackInfoReturnable<String> cir) {
         cir.setReturnValue(DefaultPlayerSkin.getSkinModelName(switch (baseSkin) {
-            case STEVE -> STEVE_UUID;
-            case ALEX -> ALEX_UUID;
+            case steve -> STEVE_UUID;
+            case alex -> ALEX_UUID;
         }));
     }
 }

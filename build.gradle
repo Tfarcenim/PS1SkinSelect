@@ -76,6 +76,11 @@ minecraft {
             }
         }
 
+        client2 {
+            parent runs.client
+            args '--username', 'Dev1'
+        }
+
         server {
             properties 'mixin.env.remapRefMap': 'true'
             property 'mixin.env.refMapRemappingFile', "${project.projectDir}/build/createSrgToMcp/output.srg"
