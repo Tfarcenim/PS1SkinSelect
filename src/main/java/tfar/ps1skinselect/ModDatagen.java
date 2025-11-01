@@ -22,5 +22,4 @@ public class ModDatagen {
             add(ModInit.BLOCK,"Wardrobe");
         }
     }
-
 }

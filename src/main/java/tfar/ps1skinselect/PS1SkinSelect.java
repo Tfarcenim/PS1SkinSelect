@@ -43,10 +43,10 @@ public class PS1SkinSelect {
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.addListener(this::commands);
-        MinecraftForge.EVENT_BUS.addListener(this::serverStarted);
         MinecraftForge.EVENT_BUS.addListener(this::loggedIn);
         MinecraftForge.EVENT_BUS.addListener(this::clonePlayer);
         MinecraftForge.EVENT_BUS.addListener(this::tracking);
+        MinecraftForge.EVENT_BUS.addListener(this::respawn);
         if (FMLEnvironment.dist.isClient()) {
             PS1SkinSelectClient.init();
         }
@@ -64,16 +64,13 @@ public class PS1SkinSelect {
     }
 
     void commands(RegisterCommandsEvent event) {
-        //SkinSelectCommand.register(event.getDispatcher());
+        if (!FMLEnvironment.production) SkinSelectCommand.register(event.getDispatcher());
     }
 
-    public static CustomSavedData customSavedData;
-
-    void serverStarted(ServerStartedEvent event) {
-        MinecraftServer server = event.getServer();
-        ServerLevel overworld = server.overworld();
-        customSavedData = overworld.getDataStorage().computeIfAbsent((p_184095_) -> CustomSavedData.loadStatic(overworld, p_184095_),
-                () -> new CustomSavedData(), MOD_ID);
+    void respawn(PlayerEvent.PlayerRespawnEvent event) {
+        ServerPlayer player = (ServerPlayer) event.getPlayer();
+        ForgePacketHandler.sendToClient(new S2CSkinSettingsPacket(player.getId(),
+                ((PlayerDuck)player).getBaseSkin(),((PlayerDuck)player).getClothing()),player);
     }
 
     void tracking(PlayerEvent.StartTracking event) {

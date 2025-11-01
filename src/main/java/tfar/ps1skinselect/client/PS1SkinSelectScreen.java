@@ -6,6 +6,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
+import org.apache.commons.lang3.StringUtils;
 import tfar.ps1skinselect.BaseSkin;
 import tfar.ps1skinselect.ClothingColor;
 import tfar.ps1skinselect.ClothingType;
@@ -53,7 +54,7 @@ public class PS1SkinSelectScreen extends Screen {
         this.leftPos = (this.width - this.imageWidth) / 2;
         this.topPos = (this.height - this.imageHeight) / 2;
 
-        changeSkin = addRenderableWidget(new Button(width/2 - 70,10,140,20, new TextComponent(skin.name()), this::press));
+        changeSkin = addRenderableWidget(new Button(width/2 - 70,10,140,20, new TextComponent(StringUtils.capitalize(skin.name())), this::press));
         int w = 160;
        // save = addRenderableWidget(new Button(width/2-w,height - 30,150,20, new TextComponent("Save"), this::pressSave));
         close = addRenderableWidget(new Button(width/2-75,height-30,150,20, new TextComponent("Save & Close"), this::pressClose));
@@ -90,7 +91,7 @@ public class PS1SkinSelectScreen extends Screen {
         //change how the local player renders
         ((PlayerDuck)minecraft.player).setBaseSkin(skin);
 
-        b.setMessage(new TextComponent(skin.name()));
+        b.setMessage(new TextComponent(StringUtils.capitalize(skin.name())));
     }
 
     void pressSave(Button b) {
